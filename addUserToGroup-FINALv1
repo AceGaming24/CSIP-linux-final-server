@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#Written by Colin Vo for Linux Server Project
+#This script determines if a user exists, then determines if a group exists, then adds them to it
+
+#Checks if user is root user
+
+if [ $(id -u) -eq 0 ]; then
+
+   #prompts user to add to group
+   read -p "What user would you like to add to a group? " user
+
+   #checks if user exists
+   existingUser=$(grep -om1 $user /etc/passwd | head -n1)
+
+   if [ "$existingUser" != "$user" ]; then
+     echo "This user does not exist. Run ./addUser to create one."; exit 1
+   else
+     echo "You have selected '$user'. "
+   fi
+
+   #prompts group to add user to
+   read -p "What group would would you like to add '$user' to? " group
+
+   #checks if group exists
+   existingGroup=$(grep -om1 $group /etc/group | head -n1)
+   if [ "$existingGroup" != "$group" ]; then
+     echo "This group does not exist. Run ./addGroup to create one."; exit 1
+   else
+     #adds user to group
+     usermod -a -G "$group" "$user"
+     echo "Success. User '$user' added to group '$group'."
+   fi
+
+else
+
+    #informs user if they do not have permission
+    echo "You do not have permission to perform this action."
+    exit 2
+
+fi
