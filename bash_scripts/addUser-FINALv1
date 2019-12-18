@@ -1,0 +1,52 @@
+#!/bin/bash
+
+#Written by Colin Vo for Linux Server Project
+#This script creates a user
+
+
+#Checks if user is root user
+
+if [ $(id -u) -eq 0 ]; then
+
+    #reads in user, password, and confirmation for password while password and confirm password are not equal
+    read -p "Enter a username: " user
+
+    existingUser=$(grep -om1 $user /etc/passwd | head -n1)
+
+    #makes sure username doesn't exist
+    if [ "$user" = "$existingUser" ]; then
+
+        echo "'$user' exists."
+        exit 1
+
+    fi
+
+    #prompts passwords and confirm password
+    read -s -p "Enter a password: " password
+
+    read -s -p $'\nConfirm your password: ' passwordConfirm
+
+    if [ $password != $passwordConfirm ]; then
+
+	      echo $'\nPasswords do not match.'
+        exit 1
+
+    else
+
+    #adds password to the /dev/null file for encryption
+	  egrep "^$user" /etc/passwd >/dev/null
+
+    #makes password hidden when typed in terminal
+    pass=$(perl -e 'print crypt($ARGV[0], "password")' $password)
+    useradd -p "$pass" "$user"
+	  echo $'\nSuccess. User '$user' created.'
+
+    fi
+
+else
+
+    #informs user if they do not have permission
+    echo "You do not have permission to perform this action."
+    exit 2
+
+fi

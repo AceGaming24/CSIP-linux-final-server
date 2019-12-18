@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#Written by Colin Vo for Linux Server Project
+#This script allows a privelaged user to install packages necessary for apache, then runs apache.
+
+#Checks if user is root user
+
+if [ $(id -u) -eq 0 ]; then
+
+   #updates apt-get, else would cause errors
+   apt-get update
+
+   #installs apache
+   apt-get install apache2
+
+   #runs apache just in case it stops, then checks status to show user.
+   service apache2 start
+   service apache2 status
+
+   echo "Packages successfully installed. "
+   echo "To terminate apache, use \"service apache2 stop"\"
+
+else
+
+    #informs user if they do not have permission
+    echo "You do not have permission to perform this action."
+    exit 2
+
+fi
