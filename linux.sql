@@ -50,3 +50,5 @@ select * from users inner join orders on users.usersID = orders.usersID;
 select address from orders, users where users.usersID(+) = orders.usersID;
 select * from orderDetail;
 select * from product;
+
+                                                                            
